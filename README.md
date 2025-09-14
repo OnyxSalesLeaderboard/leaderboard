@@ -34,15 +34,10 @@ A Next.js leaderboard application that displays sales performance data from Goog
    ```
    GOOGLE_SHEETS_SPREADSHEET_ID=your_actual_spreadsheet_id_here
    GOOGLE_SERVICE_ACCOUNT_EMAIL=onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com
+   GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account",...} # Full JSON credentials as string
    ```
 
-2. For deployment (Vercel, Netlify, etc.), add this additional environment variable:
-   ```
-   GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account","project_id":"onyx-leaderboard",...}
-   ```
-   (Copy the entire contents of `credentials.json` as a single-line JSON string)
-
-3. To find your Spreadsheet ID, look at the URL of your Google Sheet:
+2. To find your Spreadsheet ID, look at the URL of your Google Sheet:
    `https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit`
 
 ### 4. Installation and Running
@@ -91,7 +86,9 @@ This app can be deployed on Vercel, Netlify, or any other platform that supports
 
 For Vercel deployment:
 1. Connect your GitHub repository
-2. Add the environment variables in the Vercel dashboard
+2. Add the environment variables in the Vercel dashboard:
+   - `GOOGLE_SHEETS_SPREADSHEET_ID`
+   - `GOOGLE_SERVICE_ACCOUNT_KEY` (the full JSON credentials as a string)
 3. Deploy
 
 ## Security Notes

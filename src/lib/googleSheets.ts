@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
 import path from 'path';
-import fs from 'fs';
 
 export interface LeaderboardEntry {
   rank: number;
@@ -16,28 +15,15 @@ class GoogleSheetsService {
   private sheets: ReturnType<typeof google.sheets>;
 
   constructor() {
-    let auth;
-    
-    // Check if we're in a deployment environment (Vercel)
-    if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
-      // Use environment variable for deployed environments
-      const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
-      auth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-      });
-    } else {
-      // Use local file for development
-      const credentialsPath = path.join(process.cwd(), 'credentials.json');
-      if (fs.existsSync(credentialsPath)) {
-        auth = new google.auth.GoogleAuth({
-          keyFile: credentialsPath,
-          scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-        });
-      } else {
-        throw new Error('Google Sheets credentials not found. Please check your configuration.');
-      }
-    }
+    // Use environment variables for production deployment
+    const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_KEY 
+      ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY)
+      : require(path.join(process.cwd(), 'credentials.json'));
+
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    });
 
     this.sheets = google.sheets({ version: 'v4', auth });
   }
