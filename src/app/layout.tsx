@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "ONYX Leaderboard",
   description: "Sales leaderboard for ONYX team members",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
