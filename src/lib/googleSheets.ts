@@ -12,7 +12,7 @@ export interface LeaderboardEntry {
 export type FilterType = 'YTD' | 'MTD' | 'WTD';
 
 class GoogleSheetsService {
-  private sheets: any;
+  private sheets: ReturnType<typeof google.sheets>;
 
   constructor() {
     const auth = new google.auth.GoogleAuth({
@@ -39,7 +39,7 @@ class GoogleSheetsService {
       const dataRows = rows.slice(1);
       const leaderboardData: LeaderboardEntry[] = [];
 
-      dataRows.forEach((row: any[], index: number) => {
+      dataRows.forEach((row: string[], index: number) => {
         if (row.length >= 6) {
           const entry: LeaderboardEntry = {
             rank: index + 1,

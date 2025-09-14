@@ -43,6 +43,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     fetchLeaderboardData(currentFilter);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFilterChange = (filter: FilterType) => {
