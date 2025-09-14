@@ -36,7 +36,13 @@ A Next.js leaderboard application that displays sales performance data from Goog
    GOOGLE_SERVICE_ACCOUNT_EMAIL=onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com
    ```
 
-2. To find your Spreadsheet ID, look at the URL of your Google Sheet:
+2. For deployment (Vercel, Netlify, etc.), add this additional environment variable:
+   ```
+   GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account","project_id":"onyx-leaderboard",...}
+   ```
+   (Copy the entire contents of `credentials.json` as a single-line JSON string)
+
+3. To find your Spreadsheet ID, look at the URL of your Google Sheet:
    `https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit`
 
 ### 4. Installation and Running
