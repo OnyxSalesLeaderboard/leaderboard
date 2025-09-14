@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ONYX Leaderboard
 
-## Getting Started
+A Next.js leaderboard application that displays sales performance data from Google Sheets, designed to match the provided Figma design.
 
-First, run the development server:
+## Features
+
+- 🏆 Beautiful leaderboard with top 3 podium display
+- 📊 Filter by YTD (Year to Date), MTD (Month to Date), and WTD (Week to Date)
+- 🔄 Real-time data from Google Sheets
+- 📱 Responsive design matching Figma specifications
+- 🔐 Secure Google Sheets API integration via service account
+
+## Setup Instructions
+
+### 1. Google Sheets Setup
+
+1. Create a Google Spreadsheet with a sheet named "All Reps"
+2. Structure your data with columns A through R, where:
+   - Column A: Representative Name
+   - Column D: YTD Sales
+   - Column E: MTD Sales
+   - Column F: WTD Sales
+
+### 2. Google Service Account Setup
+
+1. The service account credentials are already configured in `credentials.json`
+2. Make sure to share your Google Spreadsheet with the service account email:
+   `onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com`
+3. Give the service account "Viewer" permissions
+
+### 3. Environment Configuration
+
+1. Update the `.env.local` file with your Google Spreadsheet ID:
+   ```
+   GOOGLE_SHEETS_SPREADSHEET_ID=your_actual_spreadsheet_id_here
+   GOOGLE_SERVICE_ACCOUNT_EMAIL=onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com
+   ```
+
+2. To find your Spreadsheet ID, look at the URL of your Google Sheet:
+   `https://docs.google.com/spreadsheets/d/[SPREADSHEET_ID]/edit`
+
+### 4. Installation and Running
 
 ```bash
+# Install dependencies
+npm install
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the leaderboard.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── api/leaderboard/     # API route for fetching data
+│   ├── layout.tsx           # Root layout
+│   └── page.tsx             # Main page
+├── components/
+│   ├── Leaderboard.tsx      # Main leaderboard component
+│   ├── FilterButtons.tsx    # YTD/MTD/WTD filter buttons
+│   ├── TopThreeCards.tsx    # Podium cards for top 3
+│   └── LeaderboardList.tsx  # List for remaining entries
+└── lib/
+    └── googleSheets.ts      # Google Sheets API service
+```
 
-## Learn More
+## Data Format
 
-To learn more about Next.js, take a look at the following resources:
+The application expects data in Google Sheets with the following structure:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Column | Description |
+|--------|-------------|
+| A      | Name        |
+| D      | YTD Sales   |
+| E      | MTD Sales   |
+| F      | WTD Sales   |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+This app can be deployed on Vercel, Netlify, or any other platform that supports Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For Vercel deployment:
+1. Connect your GitHub repository
+2. Add the environment variables in the Vercel dashboard
+3. Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security Notes
+
+- The `credentials.json` file is gitignored for security
+- Never commit service account credentials to version control
+- Use environment variables for sensitive configuration
