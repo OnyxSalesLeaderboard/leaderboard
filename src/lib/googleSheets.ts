@@ -18,14 +18,15 @@ class GoogleSheetsService {
     console.log('Initializing Google Sheets Service...');
     console.log('Environment check:', {
       hasPrivateKey: !!process.env.GOOGLE_PRIVATE_KEY,
+      hasPrivateKeyBase64: !!process.env.GOOGLE_PRIVATE_KEY_BASE64,
       hasEmail: !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       hasKeyId: !!process.env.GOOGLE_PRIVATE_KEY_ID,
       hasSpreadsheetId: !!process.env.GOOGLE_SHEETS_SPREADSHEET_ID
     });
 
-    if (!process.env.GOOGLE_PRIVATE_KEY || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+    if ((!process.env.GOOGLE_PRIVATE_KEY && !process.env.GOOGLE_PRIVATE_KEY_BASE64) || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
       const missingVars = [];
-      if (!process.env.GOOGLE_PRIVATE_KEY) missingVars.push('GOOGLE_PRIVATE_KEY');
+      if (!process.env.GOOGLE_PRIVATE_KEY && !process.env.GOOGLE_PRIVATE_KEY_BASE64) missingVars.push('GOOGLE_PRIVATE_KEY or GOOGLE_PRIVATE_KEY_BASE64');
       if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) missingVars.push('GOOGLE_SERVICE_ACCOUNT_EMAIL');
       if (!process.env.GOOGLE_PRIVATE_KEY_ID) missingVars.push('GOOGLE_PRIVATE_KEY_ID');
       
@@ -33,11 +34,68 @@ class GoogleSheetsService {
     }
 
     try {
+      // Handle private key from either regular or base64 format
+      let privateKey: string;
+      
+      if (process.env.GOOGLE_PRIVATE_KEY_BASE64) {
+        console.log('Using base64 encoded private key');
+        try {
+          privateKey = Buffer.from(process.env.GOOGLE_PRIVATE_KEY_BASE64, 'base64').toString('utf-8');
+          console.log('Base64 decode successful');
+        } catch (base64Error) {
+          throw new Error('Failed to decode base64 private key');
+        }
+      } else if (process.env.GOOGLE_PRIVATE_KEY) {
+        console.log('Using regular private key format');
+        privateKey = process.env.GOOGLE_PRIVATE_KEY;
+        
+        console.log('Raw private key info:', {
+          length: privateKey.length,
+          startsWithQuote: privateKey.startsWith('"'),
+          endsWithQuote: privateKey.endsWith('"'),
+          hasEscapedNewlines: privateKey.includes('\\n'),
+          hasActualNewlines: privateKey.includes('\n'),
+          firstChars: privateKey.substring(0, 30),
+          lastChars: privateKey.substring(privateKey.length - 30)
+        });
+        
+        // Remove quotes if present
+        if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+          privateKey = privateKey.slice(1, -1);
+          console.log('Removed surrounding quotes');
+        }
+        
+        // Replace escaped newlines with actual newlines
+        if (privateKey.includes('\\n')) {
+          privateKey = privateKey.replace(/\\n/g, '\n');
+          console.log('Replaced escaped newlines');
+        }
+      } else {
+        throw new Error('No private key found in environment variables');
+      }
+      
+      // Ensure proper formatting
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        throw new Error('Private key does not contain proper BEGIN marker');
+      }
+      if (!privateKey.includes('-----END PRIVATE KEY-----')) {
+        throw new Error('Private key does not contain proper END marker');
+      }
+      
+      console.log('Final private key format check:', {
+        hasBeginMarker: privateKey.includes('-----BEGIN PRIVATE KEY-----'),
+        hasEndMarker: privateKey.includes('-----END PRIVATE KEY-----'),
+        length: privateKey.length,
+        startsCorrectly: privateKey.startsWith('-----BEGIN PRIVATE KEY-----'),
+        endsCorrectly: privateKey.endsWith('-----END PRIVATE KEY-----\n') || privateKey.endsWith('-----END PRIVATE KEY-----'),
+        lineCount: privateKey.split('\n').length
+      });
+
       const credentials = {
         type: 'service_account',
         project_id: 'onyx-leaderboard',
         private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-        private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        private_key: privateKey,
         client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
         client_id: '108868370823932998885',
         auth_uri: 'https://accounts.google.com/o/oauth2/auth',
