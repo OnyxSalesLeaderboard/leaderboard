@@ -23,18 +23,18 @@ A Next.js leaderboard application that displays sales performance data from Goog
 
 ### 2. Google Service Account Setup
 
-1. The service account credentials are already configured in `credentials.json`
-2. Make sure to share your Google Spreadsheet with the service account email:
+1. Make sure to share your Google Spreadsheet with the service account email:
    `onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com`
-3. Give the service account "Viewer" permissions
+2. Give the service account "Viewer" permissions
 
 ### 3. Environment Configuration
 
-1. Update the `.env.local` file with your Google Spreadsheet ID:
+1. Update the `.env.local` file with your Google Spreadsheet ID and service account credentials:
    ```
    GOOGLE_SHEETS_SPREADSHEET_ID=your_actual_spreadsheet_id_here
    GOOGLE_SERVICE_ACCOUNT_EMAIL=onyx-leaderboard-service-accou@onyx-leaderboard.iam.gserviceaccount.com
-   GOOGLE_SERVICE_ACCOUNT_KEY={"type":"service_account",...} # Full JSON credentials as string
+   GOOGLE_PRIVATE_KEY_ID=your_private_key_id_here
+   GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nyour_private_key_here\n-----END PRIVATE KEY-----\n"
    ```
 
 2. To find your Spreadsheet ID, look at the URL of your Google Sheet:
@@ -88,11 +88,13 @@ For Vercel deployment:
 1. Connect your GitHub repository
 2. Add the environment variables in the Vercel dashboard:
    - `GOOGLE_SHEETS_SPREADSHEET_ID`
-   - `GOOGLE_SERVICE_ACCOUNT_KEY` (the full JSON credentials as a string)
+   - `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+   - `GOOGLE_PRIVATE_KEY_ID`
+   - `GOOGLE_PRIVATE_KEY`
 3. Deploy
 
 ## Security Notes
 
-- The `credentials.json` file is gitignored for security
 - Never commit service account credentials to version control
 - Use environment variables for sensitive configuration
+- Keep your `.env.local` file secure and never share it publicly
