@@ -3,12 +3,14 @@ import { google } from 'googleapis';
 export interface LeaderboardEntry {
   rank: number;
   name: string;
+  teamName: string;
   ytdSales: number;
   mtdSales: number;
   wtdSales: number;
+  yesterdaySales: number;
 }
 
-export type FilterType = 'YTD' | 'MTD' | 'WTD';
+export type FilterType = 'YTD' | 'MTD' | 'WTD' | 'YESTERDAY';
 
 class GoogleSheetsService {
   private sheets: ReturnType<typeof google.sheets>;
@@ -123,11 +125,11 @@ class GoogleSheetsService {
   async getLeaderboardData(spreadsheetId: string): Promise<LeaderboardEntry[]> {
     try {
       console.log('Fetching data from spreadsheet:', spreadsheetId);
-      console.log('Using range: All Reps!A:R');
+      console.log('Using range: Reps!A:R');
 
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'All Reps!A:R',
+        range: 'Reps!A:R',
       });
 
       console.log('API Response status:', response.status);
@@ -150,12 +152,27 @@ class GoogleSheetsService {
       dataRows.forEach((row: string[], index: number) => {
         console.log(`Processing row ${index + 1}:`, row);
         if (row.length >= 6) {
+          const ytdSales = parseFloat(row[3]) || 0;
+          const mtdSales = parseFloat(row[4]) || 0;
+          const wtdSales = parseFloat(row[5]) || 0;
+          const yesterdaySales = parseFloat(row[6]) || 0; // Column G (index 6)
+          const name = row[1] || ''; // Column B (index 1)
+          const teamName = row[2] || ''; // Column C (index 2)
+          
+          // Skip entries with empty names (but keep all sales data for filtering later)
+          if (name.trim() === '') {
+            console.log(`Row ${index + 1} skipped - empty name`);
+            return;
+          }
+          
           const entry: LeaderboardEntry = {
             rank: index + 1,
-            name: row[0] || '', // Name is in column A (index 0)
-            ytdSales: parseFloat(row[3]) || 0, // Column D (YTD)
-            mtdSales: parseFloat(row[4]) || 0, // Column E (MTD)
-            wtdSales: parseFloat(row[5]) || 0, // Column F (WTD)
+            name: name,
+            teamName: teamName,
+            ytdSales: ytdSales,
+            mtdSales: mtdSales,
+            wtdSales: wtdSales,
+            yesterdaySales: yesterdaySales,
           };
           leaderboardData.push(entry);
           console.log('Created entry:', entry);
@@ -177,8 +194,25 @@ class GoogleSheetsService {
     }
   }
 
-  sortByFilter(data: LeaderboardEntry[], filter: FilterType): LeaderboardEntry[] {
-    const sortedData = [...data].sort((a, b) => {
+  sortByFilter(data: LeaderboardEntry[], filter: FilterType, includeZeroSales: boolean = false): LeaderboardEntry[] {
+    // Filter out entries with 0 sales for the selected filter (unless includeZeroSales is true)
+    const filteredData = includeZeroSales ? data : data.filter((entry) => {
+      switch (filter) {
+        case 'YTD':
+          return entry.ytdSales > 0;
+        case 'MTD':
+          return entry.mtdSales > 0;
+        case 'WTD':
+          return entry.wtdSales > 0;
+        case 'YESTERDAY':
+          return entry.yesterdaySales > 0;
+        default:
+          return true;
+      }
+    });
+
+    // Then sort the filtered data
+    const sortedData = filteredData.sort((a, b) => {
       switch (filter) {
         case 'YTD':
           return b.ytdSales - a.ytdSales;
@@ -186,6 +220,8 @@ class GoogleSheetsService {
           return b.mtdSales - a.mtdSales;
         case 'WTD':
           return b.wtdSales - a.wtdSales;
+        case 'YESTERDAY':
+          return b.yesterdaySales - a.yesterdaySales;
         default:
           return 0;
       }
@@ -206,6 +242,8 @@ class GoogleSheetsService {
         return entry.mtdSales;
       case 'WTD':
         return entry.wtdSales;
+      case 'YESTERDAY':
+        return entry.yesterdaySales;
       default:
         return 0;
     }

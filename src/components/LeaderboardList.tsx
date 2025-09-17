@@ -1,4 +1,5 @@
 import { LeaderboardEntry, FilterType } from '@/lib/googleSheets';
+import { getTeamColor } from '@/lib/teamColors';
 
 interface LeaderboardListProps {
   entries: LeaderboardEntry[];
@@ -14,13 +15,11 @@ export default function LeaderboardList({ entries, currentFilter }: LeaderboardL
         return entry.mtdSales;
       case 'WTD':
         return entry.wtdSales;
+      case 'YESTERDAY':
+        return entry.yesterdaySales;
       default:
         return 0;
     }
-  };
-
-  const formatSales = (value: number): string => {
-    return `${value} SALES`;
   };
 
   return (
@@ -28,24 +27,39 @@ export default function LeaderboardList({ entries, currentFilter }: LeaderboardL
       {entries.map((entry) => (
         <div
           key={`${entry.rank}-${entry.name}`}
-          className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200"
+          className="bg-gradient-to-b content-stretch flex from-[#f4f4f4] items-start justify-start overflow-clip relative rounded-[20px] size-full to-[#e4e4e4]"
         >
-          <div className="flex items-center justify-between">
-            {/* Left side - Rank and Name */}
-            <div className="flex items-center space-x-4">
-              <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-lg text-sm font-bold min-w-[3rem] text-center">
-                #{entry.rank}
+          {/* Rank section */}
+          <div className="content-stretch flex flex-col gap-[6px] items-center justify-center relative self-stretch shrink-0 w-[59px]">
+            <div aria-hidden="true" className="absolute border-[0px_1px_0px_0px] border-solid border-white inset-0 pointer-events-none" />
+            <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[14px] text-black text-center text-nowrap">
+              <p className="leading-[normal] whitespace-pre">#{entry.rank}</p>
+            </div>
+          </div>
+
+          {/* Content section */}
+          <div className="basis-0 box-border content-stretch flex grow h-[74px] items-center justify-between min-h-px min-w-px px-[60px] py-[10px] relative shrink-0">
+            <div className="content-stretch flex gap-[15px] items-center justify-start relative shrink-0">
+              <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-black text-nowrap">
+                <p className="leading-[normal] whitespace-pre">{entry.name}</p>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">{entry.name}</h3>
+              <div className="bg-black box-border content-stretch flex gap-[3.527px] items-center justify-center px-[8px] py-[6px] relative rounded-[42.319px] shrink-0">
+                <div 
+                  className="relative shrink-0 size-[6.01px] rounded-full"
+                  style={{ backgroundColor: getTeamColor(entry.teamName) }}
+                />
+                <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[8px] text-nowrap text-white">
+                  <p className="leading-[normal] whitespace-pre">{entry.teamName.toUpperCase()}</p>
+                </div>
               </div>
             </div>
-
-            {/* Right side - Sales info */}
-            <div className="flex items-center text-gray-600">
-              <span className="text-sm font-medium">
-                {formatSales(getSalesValue(entry, currentFilter))}
-              </span>
+            <div className="content-stretch flex gap-[15px] items-center justify-center leading-[0] not-italic relative shrink-0 text-[17px] text-nowrap">
+              <div className="font-sans font-bold relative shrink-0 text-black">
+                <p className="leading-[normal] text-nowrap whitespace-pre">{getSalesValue(entry, currentFilter)}</p>
+              </div>
+              <div className="font-sans font-normal relative shrink-0 text-[rgba(0,0,0,0.6)] uppercase">
+                <p className="leading-[normal] text-nowrap whitespace-pre">Sales</p>
+              </div>
             </div>
           </div>
         </div>

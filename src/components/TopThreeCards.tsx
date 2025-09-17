@@ -1,4 +1,9 @@
 import { LeaderboardEntry, FilterType } from '@/lib/googleSheets';
+import { getTeamColor } from '@/lib/teamColors';
+
+const imgUnionGold = "/fe7ce6be7dd20659cf2422a5dda6635725af8b57.svg"; // Gold trophy for #1
+const imgUnionSilver = "/02cb8e04cb30466bc045fda161dc3497e606a72d.svg"; // Silver trophy for #2
+const imgUnionBronze = "/3a350fc98a1573882d7a0516b185c7d3a51786a5.svg"; // Bronze trophy for #3
 
 interface TopThreeCardsProps {
   topThree: LeaderboardEntry[];
@@ -14,26 +19,24 @@ export default function TopThreeCards({ topThree, currentFilter }: TopThreeCards
         return entry.mtdSales;
       case 'WTD':
         return entry.wtdSales;
+      case 'YESTERDAY':
+        return entry.yesterdaySales;
       default:
         return 0;
     }
   };
 
-  const getCardStyles = (rank: number) => {
+  const getTrophyIcon = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-gradient-to-br from-yellow-200 to-yellow-300 border-yellow-400';
+        return imgUnionGold;
       case 2:
-        return 'bg-gradient-to-br from-gray-200 to-gray-300 border-gray-400';
+        return imgUnionSilver;
       case 3:
-        return 'bg-gradient-to-br from-orange-200 to-orange-300 border-orange-400';
+        return imgUnionBronze;
       default:
-        return 'bg-gray-100 border-gray-300';
+        return imgUnionGold;
     }
-  };
-
-  const formatSales = (value: number): string => {
-    return `${value} SALES`;
   };
 
   return (
@@ -41,24 +44,47 @@ export default function TopThreeCards({ topThree, currentFilter }: TopThreeCards
       {topThree.map((entry) => (
         <div
           key={entry.rank}
-          className={`relative p-6 rounded-2xl border-2 shadow-lg transform transition-all duration-200 hover:scale-105 ${getCardStyles(
-            entry.rank
-          )}`}
+          className="bg-gradient-to-b flex flex-col h-[150px] from-[#f4f4f4] items-start justify-between overflow-clip relative rounded-[20px] size-full to-[#e4e4e4]"
         >
-          {/* Rank Badge */}
-          <div className="absolute -top-3 left-4">
-            <div className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-bold">
-              #{entry.rank}
+          {/* Header with rank and trophy */}
+          <div className="bg-black box-border content-stretch flex items-center justify-between px-[30px] py-[10px] relative shrink-0 w-full">
+            <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[14px] text-center text-nowrap text-white">
+              <p className="leading-[normal] whitespace-pre">#{entry.rank}</p>
+            </div>
+            <div className="flex items-center justify-center relative shrink-0">
+              <div className={`flex-none rotate-[180deg]`}>
+                <div className="h-[25.783px] relative w-[20px]">
+                  {(entry.rank === 1 || entry.rank === 2 || entry.rank === 3) && (
+                    <img alt="" className={`block max-w-none size-full`} src={getTrophyIcon(entry.rank)} />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Content */}
-          <div className="pt-4 text-center">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">{entry.name}</h3>
-            <div className="flex items-center justify-center text-gray-700">
-              <span className="text-sm font-medium">
-                {formatSales(getSalesValue(entry, currentFilter))}
-              </span>
+          <div className="basis-0 content-stretch flex flex-col gap-[15px] grow items-center justify-center min-h-px min-w-px relative shrink-0 w-full">
+            <div className="content-stretch flex gap-[15px] items-center justify-center relative shrink-0">
+              <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-black text-nowrap">
+                <p className="leading-[normal] whitespace-pre">{entry.name}</p>
+              </div>
+              <div className="bg-black box-border content-stretch flex gap-[3.527px] items-center justify-center px-[8px] py-[6px] relative rounded-[42.319px] shrink-0">
+                <div 
+                  className="relative shrink-0 size-[6.01px] rounded-full"
+                  style={{ backgroundColor: getTeamColor(entry.teamName) }}
+                />
+                <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[8px] text-nowrap text-white">
+                  <p className="leading-[normal] whitespace-pre">{entry.teamName.toUpperCase()}</p>
+                </div>
+              </div>
+            </div>
+            <div className="content-stretch flex gap-[15px] items-center justify-center leading-[0] not-italic relative shrink-0 text-[17px] text-nowrap">
+              <div className="font-sans font-bold relative shrink-0 text-black">
+                <p className="leading-[normal] text-nowrap whitespace-pre">{getSalesValue(entry, currentFilter)}</p>
+              </div>
+              <div className="font-sans font-normal relative shrink-0 text-[rgba(0,0,0,0.6)] uppercase">
+                <p className="leading-[normal] text-nowrap whitespace-pre">Sales</p>
+              </div>
             </div>
           </div>
         </div>

@@ -3,52 +3,22 @@ interface SearchBarProps {
   onSearchChange: (term: string) => void;
 }
 
+const imgUnion = "/d18868fcb443c7b7858b2c9a024ec212742a1754.svg";
+
 export default function SearchBar({ searchTerm, onSearchChange }: SearchBarProps) {
   return (
     <div className="flex justify-center mb-6">
-      <div className="relative w-full max-w-md">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg
-            className="h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
+      <div className="bg-[#f1f1f1] box-border content-stretch flex items-center justify-between px-[30px] py-[25px] relative rounded-[120px] w-full">
         <input
           type="text"
-          placeholder="Search rep names..."
+          placeholder="SEARCH"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-gray-800 focus:border-transparent text-sm text-black"
+          className="bg-transparent border-none outline-none flex-1 font-sans font-semibold leading-[0] text-[#7e7e7e] text-[14px] placeholder-[#7e7e7e]"
         />
-        {searchTerm && (
-          <button
-            onClick={() => onSearchChange('')}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-          >
-            <svg
-              className="h-4 w-4 text-gray-400 hover:text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        )}
+        <div className="h-[12.627px] relative shrink-0 w-[12.605px]">
+          <img alt="" className="block max-w-none size-full" src={imgUnion} />
+        </div>
       </div>
     </div>
   );

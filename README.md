@@ -14,7 +14,7 @@ A Next.js leaderboard application that displays sales performance data from Goog
 
 ### 1. Google Sheets Setup
 
-1. Create a Google Spreadsheet with a sheet named "All Reps"
+1. Create a Google Spreadsheet with a sheet named "Reps"
 2. Structure your data with columns A through R, where:
    - Column A: Representative Name
    - Column D: YTD Sales

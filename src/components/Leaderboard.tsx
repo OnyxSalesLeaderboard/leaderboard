@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { LeaderboardEntry, FilterType } from '@/lib/googleSheets';
+import { useState, useEffect, useCallback } from 'react';
+import { LeaderboardEntry, FilterType, googleSheetsService } from '@/lib/googleSheets';
 import FilterButtons from '@/components/FilterButtons';
 import TopThreeCards from '@/components/TopThreeCards';
 import LeaderboardList from '@/components/LeaderboardList';
@@ -15,6 +15,7 @@ interface LeaderboardData {
 
 export default function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardDataWithZeros, setLeaderboardDataWithZeros] = useState<LeaderboardEntry[]>([]);
   const [currentFilter, setCurrentFilter] = useState<FilterType>('YTD');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,17 +26,26 @@ export default function Leaderboard() {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`/api/leaderboard?filter=${filter}`);
+      // Fetch both datasets in parallel
+      const [normalResponse, zeroResponse] = await Promise.all([
+        fetch(`/api/leaderboard?filter=${filter}&includeZeroSales=false`),
+        fetch(`/api/leaderboard?filter=${filter}&includeZeroSales=true`)
+      ]);
       
-      if (!response.ok) {
+      if (!normalResponse.ok || !zeroResponse.ok) {
         throw new Error('Failed to fetch leaderboard data');
       }
       
-      const data: LeaderboardData = await response.json();
-      setLeaderboardData(data.data);
-      setCurrentFilter(data.filter);
+      const [normalResult, zeroResult]: [LeaderboardData, LeaderboardData] = await Promise.all([
+        normalResponse.json(),
+        zeroResponse.json()
+      ]);
+      
+      setLeaderboardData(normalResult.data);
+      setLeaderboardDataWithZeros(zeroResult.data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      console.error('Error fetching leaderboard data:', err);
+      setError('Failed to load leaderboard data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -55,10 +65,12 @@ export default function Leaderboard() {
     setSearchTerm(term);
   };
 
-  // Filter data based on search term
-  const filteredData = leaderboardData.filter(entry =>
-    entry.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter data based on search term - use appropriate dataset
+  const filteredData = searchTerm.trim() !== '' 
+    ? leaderboardDataWithZeros.filter(entry =>
+        entry.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : leaderboardData;
 
   if (loading) {
     return (
@@ -91,11 +103,19 @@ export default function Leaderboard() {
   const remaining = filteredData.slice(3);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen bg-white py-8">
+      <div className="max-w-[1200px] mx-auto px-4">
         {/* ONYX Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-wider">ONYX</h1>
+          <div className="flex justify-center">
+            <div className="h-[48.668px] w-[114.745px]">
+              <img 
+                alt="ONYX Logo" 
+                className="block max-w-none size-full" 
+                src="/e953a092f9a45643934ef28c78398007a174f2f1.svg" 
+              />
+            </div>
+          </div>
         </div>
 
         {/* Filter Buttons */}

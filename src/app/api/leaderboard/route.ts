@@ -8,7 +8,9 @@ export async function GET(request: NextRequest) {
     
     const { searchParams } = new URL(request.url);
     const filter = (searchParams.get('filter') as FilterType) || 'YTD';
+    const includeZeroSales = searchParams.get('includeZeroSales') === 'true';
     console.log('Filter requested:', filter);
+    console.log('Include zero sales:', includeZeroSales);
     
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
     console.log('Spreadsheet ID available:', !!spreadsheetId);
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
     const rawData = await googleSheetsService.getLeaderboardData(spreadsheetId);
     console.log('Raw data received:', rawData.length, 'entries');
     
-    const sortedData = googleSheetsService.sortByFilter(rawData, filter);
+    const sortedData = googleSheetsService.sortByFilter(rawData, filter, includeZeroSales);
     console.log('Sorted data:', sortedData.length, 'entries');
 
     const response = {
