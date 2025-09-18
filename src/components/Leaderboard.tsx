@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { LeaderboardEntry, FilterState, googleSheetsService } from '@/lib/googleSheets';
+import { useState, useEffect } from 'react';
+import { LeaderboardEntry, FilterState } from '@/lib/googleSheets';
 import FilterButtons from '@/components/FilterButtons';
 import TopThreeCards from '@/components/TopThreeCards';
 import LeaderboardList from '@/components/LeaderboardList';

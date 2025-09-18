@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 import imgImage42 from '/public/logo-icon.png';
-import imgVector from '/public/3a350fc98a1573882d7a0516b185c7d3a51786a5.svg';
 
 export default function Hero() {
   const tickerRef = useRef<HTMLDivElement>(null);
@@ -59,11 +59,11 @@ export default function Hero() {
               <p className="leading-[normal] whitespace-pre">Apply</p>
             </div>
           </a>
-          <a href="/" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
+          <Link href="/" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
             <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
               <p className="leading-[normal] whitespace-pre">Leaderboard</p>
             </div>
-          </a>
+          </Link>
         </div>
         
         {/* Logo */}
