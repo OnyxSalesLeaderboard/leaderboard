@@ -54,7 +54,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
   };
 
   return (
-    <div className="flex flex-col items-center mb-8 gap-4">
+    <div className="flex flex-col md:flex-row items-center justify-center mb-8 gap-4">
       {/* Top Level Filters */}
       <div className="bg-[#f1f1f1] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
         {topLevelFilters.map((filter) => (
