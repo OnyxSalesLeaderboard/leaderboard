@@ -6,6 +6,7 @@ import FilterButtons from '@/components/FilterButtons';
 import TopThreeCards from '@/components/TopThreeCards';
 import LeaderboardList from '@/components/LeaderboardList';
 import SearchBar from '@/components/SearchBar';
+import Hero from '@/components/Hero';
 
 interface LeaderboardData {
   data: LeaderboardEntry[];
@@ -72,78 +73,64 @@ export default function Leaderboard() {
       )
     : leaderboardData;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading leaderboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Error: {error}</p>
-          <button
-            onClick={() => fetchLeaderboardData(currentFilter)}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const topThree = filteredData.slice(0, 3);
   const remaining = filteredData.slice(3);
 
   return (
-    <div className="min-h-screen bg-white py-8">
-      <div className="max-w-[1200px] mx-auto px-4">
-        {/* ONYX Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center">
-            <div className="h-[48.668px] w-[114.745px]">
-              <img 
-                alt="ONYX Logo" 
-                className="block max-w-none size-full" 
-                src="/e953a092f9a45643934ef28c78398007a174f2f1.svg" 
-              />
+    <div className="min-h-screen bg-white p-[10px]">
+      {/* Hero Section - Always visible */}
+      <Hero />
+      
+      <div className="max-w-[1200px] mx-auto px-4 py-8">
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading leaderboard...</p>
             </div>
           </div>
-        </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">Error: {error}</p>
+              <button
+                onClick={() => fetchLeaderboardData(currentFilter)}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Filter Buttons */}
+            <FilterButtons
+              currentFilter={currentFilter}
+              onFilterChange={handleFilterChange}
+            />
 
-        {/* Filter Buttons */}
-        <FilterButtons
-          currentFilter={currentFilter}
-          onFilterChange={handleFilterChange}
-        />
+            {/* Search Bar */}
+            <SearchBar
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+            />
 
-        {/* Search Bar */}
-        <SearchBar
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-        />
+            {/* Top Three Cards */}
+            {topThree.length > 0 && (
+              <TopThreeCards
+                topThree={topThree}
+                currentFilter={currentFilter}
+              />
+            )}
 
-        {/* Top Three Cards */}
-        {topThree.length > 0 && (
-          <TopThreeCards
-            topThree={topThree}
-            currentFilter={currentFilter}
-          />
-        )}
-
-        {/* Remaining Leaderboard */}
-        {remaining.length > 0 && (
-          <LeaderboardList
-            entries={remaining}
-            currentFilter={currentFilter}
-          />
+            {/* Remaining Leaderboard */}
+            {remaining.length > 0 && (
+              <LeaderboardList
+                entries={remaining}
+                currentFilter={currentFilter}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

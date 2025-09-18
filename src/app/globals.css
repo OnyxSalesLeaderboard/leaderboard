@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-instrument-sans);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -23,4 +23,37 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes scroll-ticker {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 5s linear infinite;
+}
+
+.scroll-controlled-ticker {
+  animation: ticker 5s linear infinite;
+}
+
+/* Separate class for scroll-driven animation */
+.scroll-ticker-active {
+  animation: scroll-ticker linear;
+  animation-timeline: scroll(root block);
+  animation-range: 0% 100%;
 }
