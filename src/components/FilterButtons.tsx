@@ -11,11 +11,11 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
   const getSecondLevelFilters = (topLevel: TopLevelFilter): SecondLevelFilter[] => {
     switch (topLevel) {
       case 'SUBMITTED':
-        return ['YTD', 'MTD', 'WTD', 'YESTERDAY'];
+        return ['YESTERDAY', 'WTD', 'MTD', 'YTD'];
       case 'VERIFIED':
-        return ['YTD', 'MTD', 'WTD'];
+        return ['WTD', 'MTD', 'YTD'];
       case 'INSTALLED':
-        return ['YTD', 'MTD'];
+        return ['MTD', 'YTD'];
       default:
         return [];
     }
