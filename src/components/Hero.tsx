@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import imgImage42 from '/public/logo-icon.png';
 
 export default function Hero() {
   const tickerRef = useRef<HTMLDivElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   useEffect(() => {
     if (tickerRef.current) {
@@ -42,38 +47,102 @@ export default function Hero() {
   return (
     <div className="bg-black box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[30px] relative rounded-[30px] size-full min-h-[400px] mb-8 overflow-hidden">
       {/* Navigation */}
-      <div className="gap-[13px] grid grid-cols-[repeat(3,_minmax(0px,_1fr))] grid-rows-[repeat(1,_minmax(0px,_1fr))] h-[50px] relative rounded-[120px] shrink-0 w-full">
-        <div className="[grid-area:1_/_1] content-stretch flex gap-[4px] items-center justify-start relative shrink-0">
-          <a href="https://fiberonyx.com" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
-            <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
-              <p className="leading-[normal] whitespace-pre">Home</p>
-            </div>
-          </a>
-          <a href="https://fiberonyx.com/about" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
-            <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
-              <p className="leading-[normal] whitespace-pre">About us</p>
-            </div>
-          </a>
-          <a href="https://fiberonyx.com/apply" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
-            <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
-              <p className="leading-[normal] whitespace-pre">Apply</p>
-            </div>
-          </a>
-          <Link href="/" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
-            <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
-              <p className="leading-[normal] whitespace-pre">Leaderboard</p>
-            </div>
-          </Link>
+      <div className="relative w-full h-[50px]">
+        {/* Mobile Navigation */}
+        <div className="md:hidden flex items-center justify-between w-full h-full">
+          {/* Logo on left */}
+          <div className="flex items-center">
+            <img alt="Onyx Logo" className="h-[40px] w-auto" src={imgImage42.src} />
+          </div>
+          
+          {/* Hamburger menu on right */}
+          <button
+            onClick={toggleMobileMenu}
+            className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex flex-col gap-[4px] items-center justify-center p-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+            aria-label="Toggle mobile menu"
+          >
+            <div className={`w-[20px] h-[2px] bg-white transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-[6px]' : ''}`}></div>
+            <div className={`w-[20px] h-[2px] bg-white transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+            <div className={`w-[20px] h-[2px] bg-white transition-transform duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-[6px]' : ''}`}></div>
+          </button>
         </div>
-        
-        {/* Logo */}
-        <div className="[grid-area:1_/_2] box-border content-stretch flex flex-col gap-[10px] items-center justify-center p-[10px] relative shrink-0">
-          <img alt="" className="h-[auto] shrink-0 w-[100px]" src={imgImage42.src} />
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:grid gap-[13px] grid-cols-[repeat(3,_minmax(0px,_1fr))] grid-rows-[repeat(1,_minmax(0px,_1fr))] h-[50px] rounded-[120px] w-full">
+          <div className="[grid-area:1_/_1] content-stretch flex gap-[4px] items-center justify-start relative shrink-0">
+            <a href="https://fiberonyx.com" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
+              <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
+                <p className="leading-[normal] whitespace-pre">Home</p>
+              </div>
+            </a>
+            <a href="https://fiberonyx.com/about" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
+              <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
+                <p className="leading-[normal] whitespace-pre">About us</p>
+              </div>
+            </a>
+            <a href="https://fiberonyx.com/apply" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
+              <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
+                <p className="leading-[normal] whitespace-pre">Apply</p>
+              </div>
+            </a>
+            <Link href="/" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
+              <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
+                <p className="leading-[normal] whitespace-pre">Leaderboard</p>
+              </div>
+            </Link>
+          </div>
+          
+          {/* Logo */}
+          <div className="[grid-area:1_/_2] box-border content-stretch flex flex-col gap-[10px] items-center justify-center p-[10px] relative shrink-0">
+            <img alt="Onyx Logo" className="h-[auto] shrink-0 w-[100px]" src={imgImage42.src} />
+          </div>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        <div className={`md:hidden absolute top-full left-0 w-full mt-2 backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] rounded-[20px] transition-all duration-300 overflow-hidden z-50 ${isMobileMenuOpen ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          <div className="flex flex-col p-4 gap-2">
+            <a 
+              href="https://fiberonyx.com" 
+              className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                <p className="leading-[normal]">Home</p>
+              </div>
+            </a>
+            <a 
+              href="https://fiberonyx.com/about" 
+              className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                <p className="leading-[normal]">About us</p>
+              </div>
+            </a>
+            <a 
+              href="https://fiberonyx.com/apply" 
+              className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                <p className="leading-[normal]">Apply</p>
+              </div>
+            </a>
+            <Link 
+              href="/" 
+              className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                <p className="leading-[normal]">Leaderboard</p>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
       
       {/* Main Title - Ticker Animation */}
-      <div className="font-sans font-bold leading-[0.9] not-italic relative shrink-0 text-[16vw] text-center text-white overflow-hidden">
+      <div className="font-sans font-semibold leading-[0.9] not-italic relative shrink-0 text-[30vw] md:text-[16vw] text-center text-white overflow-hidden">
         <div ref={tickerRef} className="whitespace-nowrap">
           <span className="inline-block px-8">Leaderboard</span>
           <span className="inline-block px-8">Leaderboard</span>
