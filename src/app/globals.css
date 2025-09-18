@@ -55,5 +55,5 @@ body {
 .scroll-ticker-active {
   animation: scroll-ticker linear;
   animation-timeline: scroll(root block);
-  animation-range: 0% 20%;
+  animation-range: 0% 35%;
 }
