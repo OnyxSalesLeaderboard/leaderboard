@@ -120,7 +120,7 @@ export default function Hero() {
               </div>
             </a>
             <a 
-              href="https://fiberonyx.com/apply" 
+              href="https://fiberonyx.com/contact" 
               className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
