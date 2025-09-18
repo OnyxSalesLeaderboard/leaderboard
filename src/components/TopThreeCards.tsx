@@ -70,7 +70,7 @@ export default function TopThreeCards({ topThree, currentFilter }: TopThreeCards
                 <p className="leading-[normal] text-nowrap whitespace-pre">{getSalesValue(entry, currentFilter)}</p>
               </div>
               <div className="font-sans font-normal relative shrink-0 text-[rgba(0,0,0,0.6)] uppercase">
-                <p className="leading-[normal] text-nowrap whitespace-pre">Sales</p>
+                <p className="leading-[normal] text-nowrap whitespace-pre">{currentFilter.topLevel === 'INSTALLED' ? 'Installs' : 'Sales'}</p>
               </div>
             </div>
           </div>
