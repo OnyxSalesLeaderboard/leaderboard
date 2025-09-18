@@ -1,26 +1,13 @@
-import { LeaderboardEntry, FilterType } from '@/lib/googleSheets';
+import { LeaderboardEntry, FilterState } from '@/lib/googleSheets';
+import { getSalesValue } from '@/lib/filterUtils';
 import { getTeamColor } from '@/lib/teamColors';
 
 interface LeaderboardListProps {
   entries: LeaderboardEntry[];
-  currentFilter: FilterType;
+  currentFilter: FilterState;
 }
 
 export default function LeaderboardList({ entries, currentFilter }: LeaderboardListProps) {
-  const getSalesValue = (entry: LeaderboardEntry, filter: FilterType): number => {
-    switch (filter) {
-      case 'YTD':
-        return entry.ytdSales;
-      case 'MTD':
-        return entry.mtdSales;
-      case 'WTD':
-        return entry.wtdSales;
-      case 'YESTERDAY':
-        return entry.yesterdaySales;
-      default:
-        return 0;
-    }
-  };
 
   return (
     <div className="space-y-3">
@@ -38,8 +25,8 @@ export default function LeaderboardList({ entries, currentFilter }: LeaderboardL
           </div>
 
           {/* Content section */}
-          <div className="basis-0 box-border content-stretch flex grow h-[74px] items-center justify-between min-h-px min-w-px px-[60px] py-[10px] relative shrink-0">
-            <div className="content-stretch flex gap-[15px] items-center justify-start relative shrink-0">
+          <div className="basis-0 box-border content-stretch flex grow h-[74px] items-center justify-between min-h-px min-w-px px-5 md:px-[20px] py-[10px] relative shrink-0">
+            <div className="content-stretch flex flex-col md:flex-row gap-[5px] md:gap-[15px] items-start md:items-center justify-start relative shrink-0">
               <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-black text-nowrap">
                 <p className="leading-[normal] whitespace-pre">{entry.name}</p>
               </div>

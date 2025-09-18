@@ -4,12 +4,34 @@ export interface LeaderboardEntry {
   rank: number;
   name: string;
   teamName: string;
+  // Submitted columns (D, E, F, G)
+  submittedYtd: number;
+  submittedMtd: number;
+  submittedWtd: number;
+  submittedYesterday: number;
+  // Verified columns (H, I, J)
+  verifiedYtd: number;
+  verifiedMtd: number;
+  verifiedWtd: number;
+  // Installed columns (K, L)
+  installedYtd: number;
+  installedMtd: number;
+  // Legacy fields for backward compatibility
   ytdSales: number;
   mtdSales: number;
   wtdSales: number;
   yesterdaySales: number;
 }
 
+export type TopLevelFilter = 'SUBMITTED' | 'VERIFIED' | 'INSTALLED';
+export type SecondLevelFilter = 'YTD' | 'MTD' | 'WTD' | 'YESTERDAY';
+
+export interface FilterState {
+  topLevel: TopLevelFilter;
+  secondLevel: SecondLevelFilter;
+}
+
+// Legacy type for backward compatibility
 export type FilterType = 'YTD' | 'MTD' | 'WTD' | 'YESTERDAY';
 
 class GoogleSheetsService {
@@ -151,13 +173,24 @@ class GoogleSheetsService {
 
       dataRows.forEach((row: string[], index: number) => {
         console.log(`Processing row ${index + 1}:`, row);
-        if (row.length >= 6) {
-          const ytdSales = parseFloat(row[3]) || 0;
-          const mtdSales = parseFloat(row[4]) || 0;
-          const wtdSales = parseFloat(row[5]) || 0;
-          const yesterdaySales = parseFloat(row[6]) || 0; // Column G (index 6)
+        if (row.length >= 12) { // Ensure we have at least 12 columns (A-L)
           const name = row[1] || ''; // Column B (index 1)
           const teamName = row[2] || ''; // Column C (index 2)
+          
+          // Submitted columns (D, E, F, G)
+          const submittedYtd = parseFloat(row[3]) || 0; // Column D (index 3)
+          const submittedMtd = parseFloat(row[4]) || 0; // Column E (index 4)
+          const submittedWtd = parseFloat(row[5]) || 0; // Column F (index 5)
+          const submittedYesterday = parseFloat(row[6]) || 0; // Column G (index 6)
+          
+          // Verified columns (H, I, J)
+          const verifiedYtd = parseFloat(row[7]) || 0; // Column H (index 7)
+          const verifiedMtd = parseFloat(row[8]) || 0; // Column I (index 8)
+          const verifiedWtd = parseFloat(row[9]) || 0; // Column J (index 9)
+          
+          // Installed columns (K, L)
+          const installedYtd = parseFloat(row[10]) || 0; // Column K (index 10)
+          const installedMtd = parseFloat(row[11]) || 0; // Column L (index 11)
           
           // Skip entries with empty names (but keep all sales data for filtering later)
           if (name.trim() === '') {
@@ -169,10 +202,21 @@ class GoogleSheetsService {
             rank: index + 1,
             name: name,
             teamName: teamName,
-            ytdSales: ytdSales,
-            mtdSales: mtdSales,
-            wtdSales: wtdSales,
-            yesterdaySales: yesterdaySales,
+            // New structure
+            submittedYtd,
+            submittedMtd,
+            submittedWtd,
+            submittedYesterday,
+            verifiedYtd,
+            verifiedMtd,
+            verifiedWtd,
+            installedYtd,
+            installedMtd,
+            // Legacy fields for backward compatibility
+            ytdSales: submittedYtd,
+            mtdSales: submittedMtd,
+            wtdSales: submittedWtd,
+            yesterdaySales: submittedYesterday,
           };
           leaderboardData.push(entry);
           console.log('Created entry:', entry);
@@ -194,59 +238,65 @@ class GoogleSheetsService {
     }
   }
 
-  sortByFilter(data: LeaderboardEntry[], filter: FilterType, includeZeroSales: boolean = false): LeaderboardEntry[] {
+  // Helper function to get sales value based on filter state
+  getSalesValue(entry: LeaderboardEntry, filterState: FilterState): number {
+    const { topLevel, secondLevel } = filterState;
+    
+    switch (topLevel) {
+      case 'SUBMITTED':
+        switch (secondLevel) {
+          case 'YTD': return entry.submittedYtd;
+          case 'MTD': return entry.submittedMtd;
+          case 'WTD': return entry.submittedWtd;
+          case 'YESTERDAY': return entry.submittedYesterday;
+          default: return 0;
+        }
+      case 'VERIFIED':
+        switch (secondLevel) {
+          case 'YTD': return entry.verifiedYtd;
+          case 'MTD': return entry.verifiedMtd;
+          case 'WTD': return entry.verifiedWtd;
+          default: return 0;
+        }
+      case 'INSTALLED':
+        switch (secondLevel) {
+          case 'YTD': return entry.installedYtd;
+          case 'MTD': return entry.installedMtd;
+          default: return 0;
+        }
+      default:
+        return 0;
+    }
+  }
+
+  sortByFilterState(data: LeaderboardEntry[], filterState: FilterState, includeZeroSales: boolean = false): LeaderboardEntry[] {
     // Filter out entries with 0 sales for the selected filter (unless includeZeroSales is true)
     const filteredData = includeZeroSales ? data : data.filter((entry) => {
-      switch (filter) {
-        case 'YTD':
-          return entry.ytdSales > 0;
-        case 'MTD':
-          return entry.mtdSales > 0;
-        case 'WTD':
-          return entry.wtdSales > 0;
-        case 'YESTERDAY':
-          return entry.yesterdaySales > 0;
-        default:
-          return true;
-      }
+      return this.getSalesValue(entry, filterState) > 0;
     });
 
     // Then sort the filtered data
     const sortedData = filteredData.sort((a, b) => {
-      switch (filter) {
-        case 'YTD':
-          return b.ytdSales - a.ytdSales;
-        case 'MTD':
-          return b.mtdSales - a.mtdSales;
-        case 'WTD':
-          return b.wtdSales - a.wtdSales;
-        case 'YESTERDAY':
-          return b.yesterdaySales - a.yesterdaySales;
-        default:
-          return 0;
-      }
+      const aValue = this.getSalesValue(a, filterState);
+      const bValue = this.getSalesValue(b, filterState);
+      return bValue - aValue; // Descending order
     });
 
-    // Update ranks after sorting
+    // Add ranks
     return sortedData.map((entry, index) => ({
       ...entry,
-      rank: index + 1,
+      rank: index + 1
     }));
   }
 
-  getSalesValue(entry: LeaderboardEntry, filter: FilterType): number {
-    switch (filter) {
-      case 'YTD':
-        return entry.ytdSales;
-      case 'MTD':
-        return entry.mtdSales;
-      case 'WTD':
-        return entry.wtdSales;
-      case 'YESTERDAY':
-        return entry.yesterdaySales;
-      default:
-        return 0;
-    }
+  // Legacy method for backward compatibility
+  sortByFilter(data: LeaderboardEntry[], filter: FilterType, includeZeroSales: boolean = false): LeaderboardEntry[] {
+    // Convert legacy filter to new filter state (defaults to SUBMITTED)
+    const filterState: FilterState = {
+      topLevel: 'SUBMITTED',
+      secondLevel: filter
+    };
+    return this.sortByFilterState(data, filterState, includeZeroSales);
   }
 }
 

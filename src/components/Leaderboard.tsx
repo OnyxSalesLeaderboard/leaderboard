@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { LeaderboardEntry, FilterType, googleSheetsService } from '@/lib/googleSheets';
+import { LeaderboardEntry, FilterState, googleSheetsService } from '@/lib/googleSheets';
 import FilterButtons from '@/components/FilterButtons';
 import TopThreeCards from '@/components/TopThreeCards';
 import LeaderboardList from '@/components/LeaderboardList';
@@ -9,27 +9,27 @@ import SearchBar from '@/components/SearchBar';
 
 interface LeaderboardData {
   data: LeaderboardEntry[];
-  filter: FilterType;
+  filter: FilterState;
   timestamp: string;
 }
 
 export default function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [leaderboardDataWithZeros, setLeaderboardDataWithZeros] = useState<LeaderboardEntry[]>([]);
-  const [currentFilter, setCurrentFilter] = useState<FilterType>('YTD');
+  const [currentFilter, setCurrentFilter] = useState<FilterState>({ topLevel: 'SUBMITTED', secondLevel: 'YTD' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchLeaderboardData = async (filter: FilterType) => {
+  const fetchLeaderboardData = async (filterState: FilterState) => {
     try {
       setLoading(true);
       setError(null);
       
       // Fetch both datasets in parallel
       const [normalResponse, zeroResponse] = await Promise.all([
-        fetch(`/api/leaderboard?filter=${filter}&includeZeroSales=false`),
-        fetch(`/api/leaderboard?filter=${filter}&includeZeroSales=true`)
+        fetch(`/api/leaderboard?topLevel=${filterState.topLevel}&secondLevel=${filterState.secondLevel}&includeZeroSales=false`),
+        fetch(`/api/leaderboard?topLevel=${filterState.topLevel}&secondLevel=${filterState.secondLevel}&includeZeroSales=true`)
       ]);
       
       if (!normalResponse.ok || !zeroResponse.ok) {
@@ -56,9 +56,9 @@ export default function Leaderboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFilterChange = (filter: FilterType) => {
-    setCurrentFilter(filter);
-    fetchLeaderboardData(filter);
+  const handleFilterChange = (filterState: FilterState) => {
+    setCurrentFilter(filterState);
+    fetchLeaderboardData(filterState);
   };
 
   const handleSearchChange = (term: string) => {

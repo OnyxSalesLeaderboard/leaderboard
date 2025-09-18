@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { googleSheetsService, FilterType } from '@/lib/googleSheets';
+import { googleSheetsService, FilterState, TopLevelFilter, SecondLevelFilter } from '@/lib/googleSheets';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,9 +7,12 @@ export async function GET(request: NextRequest) {
     console.log('Request URL:', request.url);
     
     const { searchParams } = new URL(request.url);
-    const filter = (searchParams.get('filter') as FilterType) || 'YTD';
+    const topLevel = (searchParams.get('topLevel') as TopLevelFilter) || 'SUBMITTED';
+    const secondLevel = (searchParams.get('secondLevel') as SecondLevelFilter) || 'YTD';
     const includeZeroSales = searchParams.get('includeZeroSales') === 'true';
-    console.log('Filter requested:', filter);
+    
+    const filterState: FilterState = { topLevel, secondLevel };
+    console.log('Filter requested:', filterState);
     console.log('Include zero sales:', includeZeroSales);
     
     const spreadsheetId = process.env.GOOGLE_SHEETS_SPREADSHEET_ID;
@@ -28,12 +31,12 @@ export async function GET(request: NextRequest) {
     const rawData = await googleSheetsService.getLeaderboardData(spreadsheetId);
     console.log('Raw data received:', rawData.length, 'entries');
     
-    const sortedData = googleSheetsService.sortByFilter(rawData, filter, includeZeroSales);
+    const sortedData = googleSheetsService.sortByFilterState(rawData, filterState, includeZeroSales);
     console.log('Sorted data:', sortedData.length, 'entries');
 
     const response = {
       data: sortedData,
-      filter,
+      filter: filterState,
       timestamp: new Date().toISOString(),
     };
     

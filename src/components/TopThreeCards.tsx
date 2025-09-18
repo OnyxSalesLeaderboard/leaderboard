@@ -1,4 +1,5 @@
-import { LeaderboardEntry, FilterType } from '@/lib/googleSheets';
+import { LeaderboardEntry, FilterState } from '@/lib/googleSheets';
+import { getSalesValue } from '@/lib/filterUtils';
 import { getTeamColor } from '@/lib/teamColors';
 
 const imgUnionGold = "/fe7ce6be7dd20659cf2422a5dda6635725af8b57.svg"; // Gold trophy for #1
@@ -7,24 +8,10 @@ const imgUnionBronze = "/3a350fc98a1573882d7a0516b185c7d3a51786a5.svg"; // Bronz
 
 interface TopThreeCardsProps {
   topThree: LeaderboardEntry[];
-  currentFilter: FilterType;
+  currentFilter: FilterState;
 }
 
 export default function TopThreeCards({ topThree, currentFilter }: TopThreeCardsProps) {
-  const getSalesValue = (entry: LeaderboardEntry, filter: FilterType): number => {
-    switch (filter) {
-      case 'YTD':
-        return entry.ytdSales;
-      case 'MTD':
-        return entry.mtdSales;
-      case 'WTD':
-        return entry.wtdSales;
-      case 'YESTERDAY':
-        return entry.yesterdaySales;
-      default:
-        return 0;
-    }
-  };
 
   const getTrophyIcon = (rank: number) => {
     switch (rank) {
