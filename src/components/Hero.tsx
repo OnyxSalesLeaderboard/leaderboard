@@ -143,7 +143,7 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
           
           {/* Logo */}
           <div className="[grid-area:1_/_2] box-border content-stretch flex flex-col gap-[10px] items-center justify-center p-[10px] relative shrink-0">
-            <img alt="Onyx Logo" className="h-[auto] shrink-0 w-[100px]" src={imgImage42.src} />
+            <img alt="Onyx Logo" className="h-[auto] shrink-0 w-[250px]" src="/logo.png" />
           </div>
         </div>
 
