@@ -14,7 +14,11 @@ interface LeaderboardData {
   timestamp: string;
 }
 
-export default function Leaderboard() {
+interface LeaderboardProps {
+  sheetName?: string; // defaults to 'Reps'
+}
+
+export default function Leaderboard({ sheetName = 'Reps' }: LeaderboardProps) {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [leaderboardDataWithZeros, setLeaderboardDataWithZeros] = useState<LeaderboardEntry[]>([]);
   const [currentFilter, setCurrentFilter] = useState<FilterState>({ topLevel: 'SUBMITTED', secondLevel: 'YESTERDAY' });
@@ -28,9 +32,10 @@ export default function Leaderboard() {
       setError(null);
       
       // Fetch both datasets in parallel
+      const qs = `topLevel=${filterState.topLevel}&secondLevel=${filterState.secondLevel}&sheetName=${encodeURIComponent(sheetName)}`;
       const [normalResponse, zeroResponse] = await Promise.all([
-        fetch(`/api/leaderboard?topLevel=${filterState.topLevel}&secondLevel=${filterState.secondLevel}&includeZeroSales=false`),
-        fetch(`/api/leaderboard?topLevel=${filterState.topLevel}&secondLevel=${filterState.secondLevel}&includeZeroSales=true`)
+        fetch(`/api/leaderboard?${qs}&includeZeroSales=false`),
+        fetch(`/api/leaderboard?${qs}&includeZeroSales=true`)
       ]);
       
       if (!normalResponse.ok || !zeroResponse.ok) {
@@ -74,12 +79,15 @@ export default function Leaderboard() {
     : leaderboardData;
 
   const topThree = filteredData.slice(0, 3);
-  const remaining = filteredData.slice(3);
+  // Limit total shown entries to 50 (including top three)
+  const remaining = filteredData.slice(3, 50);
+
+  const heroTitle = sheetName === 'Teams' ? 'Teams Leaderboard' : sheetName === 'Products' ? 'Products Leaderboard' : 'Reps Leaderboard';
 
   return (
     <div className="min-h-screen bg-black text-white p-[10px]">
       {/* Hero Section - Always visible */}
-      <Hero />
+      <Hero title={heroTitle} />
       
       <div className="max-w-[1200px] mx-auto px-4 py-8">
         {loading ? (
@@ -108,6 +116,7 @@ export default function Leaderboard() {
               <FilterButtons
                 currentFilter={currentFilter}
                 onFilterChange={handleFilterChange}
+                sheetName={sheetName}
               />
 
               {/* Search Bar */}

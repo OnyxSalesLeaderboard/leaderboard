@@ -44,7 +44,7 @@ body {
 }
 
 .animate-ticker {
-  animation: ticker 3s linear infinite;
+  animation: ticker 5s linear infinite;
 }
 
 .scroll-controlled-ticker {
@@ -55,5 +55,5 @@ body {
 .scroll-ticker-active {
   animation: scroll-ticker linear;
   animation-timeline: scroll(root block);
-  animation-range: 0% 35%;
+  animation-range: 0% 250%;
 }

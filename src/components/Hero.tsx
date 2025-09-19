@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import imgImage42 from '/public/logo-icon.png';
 
-export default function Hero() {
+interface HeroProps {
+  title?: string;
+}
+
+export default function Hero({ title = 'Leaderboard' }: HeroProps) {
   const tickerRef = useRef<HTMLDivElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -153,9 +157,9 @@ export default function Hero() {
       {/* Main Title - Ticker Animation */}
       <div className="font-sans font-semibold leading-[0.9] not-italic relative shrink-0 text-[30vw] md:text-[16vw] text-center text-white overflow-hidden">
         <div ref={tickerRef} className="whitespace-nowrap">
-          <span className="inline-block px-8">Leaderboard</span>
-          <span className="inline-block px-8">Leaderboard</span>
-          <span className="inline-block px-8">Leaderboard</span>
+          <span className="inline-block px-8">{title}</span>
+          <span className="inline-block px-8">{title}</span>
+          <span className="inline-block px-8">{title}</span>
         </div>
       </div>
       

@@ -4,9 +4,10 @@ import { FilterState, TopLevelFilter, SecondLevelFilter } from '@/lib/googleShee
 interface FilterButtonsProps {
   currentFilter: FilterState;
   onFilterChange: (filter: FilterState) => void;
+  sheetName?: string; // optional, defaults to 'Reps'
 }
 
-export default function FilterButtons({ currentFilter, onFilterChange }: FilterButtonsProps) {
+export default function FilterButtons({ currentFilter, onFilterChange, sheetName = 'Reps' }: FilterButtonsProps) {
   const topLevelFilters: TopLevelFilter[] = ['SUBMITTED', 'VERIFIED', 'INSTALLED'];
   const [yesterdayHeaderLabel, setYesterdayHeaderLabel] = useState<string | null>(null);
   
@@ -61,7 +62,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
           if (isMounted) setYesterdayHeaderLabel(null);
           return;
         }
-        const res = await fetch(`/api/header?topLevel=SUBMITTED`);
+        const res = await fetch(`/api/header?topLevel=SUBMITTED&sheetName=${encodeURIComponent(sheetName)}`);
         if (!res.ok) return;
         const data = await res.json();
         if (isMounted) {
@@ -77,7 +78,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
     return () => {
       isMounted = false;
     };
-  }, [currentFilter.topLevel]);
+  }, [currentFilter.topLevel, sheetName]);
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-center gap-4">

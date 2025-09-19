@@ -145,11 +145,11 @@ class GoogleSheetsService {
   }
 
   // Fetch the header row (row 1) once
-  async getHeaderRow(spreadsheetId: string): Promise<string[]> {
+  async getHeaderRow(spreadsheetId: string, sheetName: string = 'Reps'): Promise<string[]> {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Reps!1:1',
+        range: `${sheetName}!1:1`,
       });
       const rows = response.data.values;
       if (!rows || rows.length === 0) return [];
@@ -161,14 +161,15 @@ class GoogleSheetsService {
   }
 
   // Get the raw Yesterday column header for the specified top level
-  async getYesterdayHeaderLabel(spreadsheetId: string, topLevel: TopLevelFilter): Promise<string | null> {
-    const header = await this.getHeaderRow(spreadsheetId);
+  async getYesterdayHeaderLabel(spreadsheetId: string, topLevel: TopLevelFilter, sheetName: string = 'Reps'): Promise<string | null> {
+    const header = await this.getHeaderRow(spreadsheetId, sheetName);
     if (header.length === 0) return null;
 
     // Column indices based on current mapping in this file:
     // Submitted columns (D, E, F, G) => indices 3,4,5,6. Yesterday is G => index 6
     if (topLevel === 'SUBMITTED') {
-      const idx = 6;
+      // If Teams or Products sheet, Yesterday is column E (index 4); otherwise G (index 6)
+      const idx = (sheetName === 'Teams' || sheetName === 'Products') ? 4 : 6;
       return header[idx] ?? null;
     }
     // No Yesterday concept for VERIFIED/INSTALLED per current UI
@@ -182,14 +183,14 @@ class GoogleSheetsService {
     return match ? match[1] : label;
   }
 
-  async getLeaderboardData(spreadsheetId: string): Promise<LeaderboardEntry[]> {
+  async getLeaderboardData(spreadsheetId: string, sheetName: string = 'Reps'): Promise<LeaderboardEntry[]> {
     try {
       console.log('Fetching data from spreadsheet:', spreadsheetId);
-      console.log('Using range: Reps!A:R');
+      console.log('Using range:', `${sheetName}!A:R`);
 
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Reps!A:R',
+        range: `${sheetName}!A:R`,
       });
 
       console.log('API Response status:', response.status);
@@ -209,26 +210,40 @@ class GoogleSheetsService {
       const dataRows = rows.slice(1);
       const leaderboardData: LeaderboardEntry[] = [];
 
+      // Column index mapping per sheet
+      // Default (Reps):
+      //  name: Col B (1), teamName: Col C (2)
+      //  Submitted YTD/MTD/WTD/Yesterday: D(3)/E(4)/F(5)/G(6)
+      //  Verified YTD/MTD/WTD: H(7)/I(8)/J(9)
+      //  Installed YTD/MTD: K(10)/L(11)
+      // Teams/Products sheet mapping (from provided screenshot):
+      //  name (team): Col A (0)
+      //  Submitted YTD/MTD/WTD/Yesterday: B(1)/C(2)/D(3)/E(4)
+      //  Verified YTD/MTD/WTD: F(5)/G(6)/H(7)
+      //  Installed YTD/MTD: I(8)/J(9)
+      const isAltSheet = (sheetName === 'Teams' || sheetName === 'Products');
+
       dataRows.forEach((row: string[], index: number) => {
         console.log(`Processing row ${index + 1}:`, row);
-        if (row.length >= 12) { // Ensure we have at least 12 columns (A-L)
-          const name = row[1] || ''; // Column B (index 1)
-          const teamName = row[2] || ''; // Column C (index 2)
+        if ((!isAltSheet && row.length >= 12) || (isAltSheet && row.length >= 10)) {
+          // Name / Team mapping
+          const name = isAltSheet ? (row[0] || '') : (row[1] || '');
+          const teamName = isAltSheet ? name : (row[2] || '');
           
           // Submitted columns (D, E, F, G)
-          const submittedYtd = parseFloat(row[3]) || 0; // Column D (index 3)
-          const submittedMtd = parseFloat(row[4]) || 0; // Column E (index 4)
-          const submittedWtd = parseFloat(row[5]) || 0; // Column F (index 5)
-          const submittedYesterday = parseFloat(row[6]) || 0; // Column G (index 6)
+          const submittedYtd = parseFloat(row[isAltSheet ? 1 : 3]) || 0;
+          const submittedMtd = parseFloat(row[isAltSheet ? 2 : 4]) || 0;
+          const submittedWtd = parseFloat(row[isAltSheet ? 3 : 5]) || 0;
+          const submittedYesterday = parseFloat(row[isAltSheet ? 4 : 6]) || 0;
           
           // Verified columns (H, I, J)
-          const verifiedYtd = parseFloat(row[7]) || 0; // Column H (index 7)
-          const verifiedMtd = parseFloat(row[8]) || 0; // Column I (index 8)
-          const verifiedWtd = parseFloat(row[9]) || 0; // Column J (index 9)
+          const verifiedYtd = parseFloat(row[isAltSheet ? 5 : 7]) || 0;
+          const verifiedMtd = parseFloat(row[isAltSheet ? 6 : 8]) || 0;
+          const verifiedWtd = parseFloat(row[isAltSheet ? 7 : 9]) || 0;
           
           // Installed columns (K, L)
-          const installedYtd = parseFloat(row[10]) || 0; // Column K (index 10)
-          const installedMtd = parseFloat(row[11]) || 0; // Column L (index 11)
+          const installedYtd = parseFloat(row[isAltSheet ? 8 : 10]) || 0;
+          const installedMtd = parseFloat(row[isAltSheet ? 9 : 11]) || 0;
           
           // Skip entries with empty names (but keep all sales data for filtering later)
           if (name.trim() === '') {

@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
     const topLevel = (searchParams.get('topLevel') as TopLevelFilter) || 'SUBMITTED';
     const secondLevel = (searchParams.get('secondLevel') as SecondLevelFilter) || 'YTD';
     const includeZeroSales = searchParams.get('includeZeroSales') === 'true';
+    const sheetName = searchParams.get('sheetName') || 'Reps';
     
     const filterState: FilterState = { topLevel, secondLevel };
     console.log('Filter requested:', filterState);
@@ -27,8 +28,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log('Calling googleSheetsService.getLeaderboardData...');
-    const rawData = await googleSheetsService.getLeaderboardData(spreadsheetId);
+    console.log('Calling googleSheetsService.getLeaderboardData...', { sheetName });
+    const rawData = await googleSheetsService.getLeaderboardData(spreadsheetId, sheetName);
     console.log('Raw data received:', rawData.length, 'entries');
     
     const sortedData = googleSheetsService.sortByFilterState(rawData, filterState, includeZeroSales);
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
       data: sortedData,
       filter: filterState,
       timestamp: new Date().toISOString(),
+      sheetName,
     };
     
     console.log('Returning successful response with', sortedData.length, 'entries');
