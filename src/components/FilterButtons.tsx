@@ -37,8 +37,10 @@ export default function FilterButtons({ currentFilter, onFilterChange, sheetName
 
   const handleTopLevelChange = (topLevel: TopLevelFilter) => {
     const availableSecondLevel = getSecondLevelFilters(topLevel);
-    // Always default to the farthest-left (first) second-level option
-    const newSecondLevel = availableSecondLevel[0];
+    // Preserve the current second-level when valid; otherwise default to leftmost
+    const newSecondLevel = availableSecondLevel.includes(currentFilter.secondLevel)
+      ? currentFilter.secondLevel
+      : availableSecondLevel[0];
     
     onFilterChange({
       topLevel,
