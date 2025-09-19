@@ -11,6 +11,8 @@ interface HeroProps {
 export default function Hero({ title = 'Leaderboard' }: HeroProps) {
   const tickerRef = useRef<HTMLDivElement>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const leaderboardRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -48,6 +50,17 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
       };
     }
   }, []);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (isLeaderboardOpen && leaderboardRef.current && !leaderboardRef.current.contains(e.target as Node)) {
+        setIsLeaderboardOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isLeaderboardOpen]);
   return (
     <div
       className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[30px] relative rounded-[30px] size-full min-h-[200px] mb-8 overflow-hidden"
@@ -98,11 +111,34 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
                 <p className="leading-[normal] whitespace-pre">Apply</p>
               </div>
             </a>
-            <Link href="/" className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors">
-              <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
-                <p className="leading-[normal] whitespace-pre">Leaderboard</p>
-              </div>
-            </Link>
+            {/* Leaderboard Dropdown (Desktop) */}
+            <div className="relative" ref={leaderboardRef}>
+              <button
+                className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border content-stretch flex gap-[10px] items-center justify-center px-[23px] py-[15px] relative rounded-[120px] shrink-0 hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+                onClick={() => setIsLeaderboardOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={isLeaderboardOpen}
+              >
+                <div className="font-sans font-semibold leading-[0] not-italic relative shrink-0 text-[16px] text-nowrap text-white">
+                  <p className="leading-[normal] whitespace-pre">Leaderboard ▾</p>
+                </div>
+              </button>
+              {isLeaderboardOpen && (
+                <div className="absolute left-0 mt-2 min-w-[200px] z-50 backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] rounded-[16px] overflow-hidden shadow-lg">
+                  <div className="flex flex-col">
+                    <Link href="/" className="px-4 py-3 hover:bg-[rgba(233,233,233,0.25)] transition-colors" onClick={() => setIsLeaderboardOpen(false)}>
+                      <span className="font-sans text-white">Reps</span>
+                    </Link>
+                    <Link href="/teams" className="px-4 py-3 hover:bg-[rgba(233,233,233,0.25)] transition-colors" onClick={() => setIsLeaderboardOpen(false)}>
+                      <span className="font-sans text-white">Teams</span>
+                    </Link>
+                    <Link href="/products" className="px-4 py-3 hover:bg-[rgba(233,233,233,0.25)] transition-colors" onClick={() => setIsLeaderboardOpen(false)}>
+                      <span className="font-sans text-white">Products</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           
           {/* Logo */}
@@ -141,15 +177,36 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
                 <p className="leading-[normal]">Apply</p>
               </div>
             </a>
-            <Link 
-              href="/" 
-              className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
-                <p className="leading-[normal]">Leaderboard</p>
-              </div>
-            </Link>
+            {/* Mobile Leaderboard Dropdown Options */}
+            <div className="grid grid-cols-1 gap-2">
+              <Link 
+                href="/" 
+                className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                  <p className="leading-[normal]">Reps</p>
+                </div>
+              </Link>
+              <Link 
+                href="/teams" 
+                className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                  <p className="leading-[normal]">Teams</p>
+                </div>
+              </Link>
+              <Link 
+                href="/products" 
+                className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                  <p className="leading-[normal]">Products</p>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
