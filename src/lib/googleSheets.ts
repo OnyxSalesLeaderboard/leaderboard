@@ -144,6 +144,44 @@ class GoogleSheetsService {
     }
   }
 
+  // Fetch the header row (row 1) once
+  async getHeaderRow(spreadsheetId: string): Promise<string[]> {
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId,
+        range: 'Reps!1:1',
+      });
+      const rows = response.data.values;
+      if (!rows || rows.length === 0) return [];
+      return rows[0];
+    } catch (error) {
+      console.error('Error fetching header row:', error);
+      return [];
+    }
+  }
+
+  // Get the raw Yesterday column header for the specified top level
+  async getYesterdayHeaderLabel(spreadsheetId: string, topLevel: TopLevelFilter): Promise<string | null> {
+    const header = await this.getHeaderRow(spreadsheetId);
+    if (header.length === 0) return null;
+
+    // Column indices based on current mapping in this file:
+    // Submitted columns (D, E, F, G) => indices 3,4,5,6. Yesterday is G => index 6
+    if (topLevel === 'SUBMITTED') {
+      const idx = 6;
+      return header[idx] ?? null;
+    }
+    // No Yesterday concept for VERIFIED/INSTALLED per current UI
+    return null;
+  }
+
+  // Trim any text after the date (e.g., "Sep 18 Submitted" -> "Sep 18")
+  trimToMonthDay(label: string | null): string | null {
+    if (!label) return null;
+    const match = label.match(/^([A-Za-z]{3}\s\d{1,2})/);
+    return match ? match[1] : label;
+  }
+
   async getLeaderboardData(spreadsheetId: string): Promise<LeaderboardEntry[]> {
     try {
       console.log('Fetching data from spreadsheet:', spreadsheetId);

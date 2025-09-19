@@ -17,7 +17,7 @@ interface LeaderboardData {
 export default function Leaderboard() {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
   const [leaderboardDataWithZeros, setLeaderboardDataWithZeros] = useState<LeaderboardEntry[]>([]);
-  const [currentFilter, setCurrentFilter] = useState<FilterState>({ topLevel: 'SUBMITTED', secondLevel: 'YTD' });
+  const [currentFilter, setCurrentFilter] = useState<FilterState>({ topLevel: 'SUBMITTED', secondLevel: 'YESTERDAY' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -103,7 +103,7 @@ export default function Leaderboard() {
           </div>
         ) : (
           <>
-            <div className='flex flex-fow items-center justify-center w-[100%] gap-[15px]'>
+            <div className='flex flex-col md:flex-row items-center justify-center w-[100%] md:gap-[15px] gap-4 mb-12'>
               {/* Filter Buttons */}
               <FilterButtons
                 currentFilter={currentFilter}

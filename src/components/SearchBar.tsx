@@ -7,7 +7,7 @@ const imgUnion = "/d18868fcb443c7b7858b2c9a024ec212742a1754.svg";
 
 export default function SearchBar({ searchTerm, onSearchChange }: SearchBarProps) {
   return (
-    <div className="flex justify-center mb-6">
+    <div className="flex justify-center w-full">
       <div className="bg-[#1c1c1c] box-border content-stretch flex items-center justify-between px-[30px] relative rounded-[120px] w-full">
         <input
           type="text"

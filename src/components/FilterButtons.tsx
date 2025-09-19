@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { FilterState, TopLevelFilter, SecondLevelFilter } from '@/lib/googleSheets';
 
 interface FilterButtonsProps {
@@ -7,6 +8,7 @@ interface FilterButtonsProps {
 
 export default function FilterButtons({ currentFilter, onFilterChange }: FilterButtonsProps) {
   const topLevelFilters: TopLevelFilter[] = ['SUBMITTED', 'VERIFIED', 'INSTALLED'];
+  const [yesterdayHeaderLabel, setYesterdayHeaderLabel] = useState<string | null>(null);
   
   const getSecondLevelFilters = (topLevel: TopLevelFilter): SecondLevelFilter[] => {
     switch (topLevel) {
@@ -22,12 +24,10 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
   };
 
   const getYesterdayLabel = () => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
+    // Only use the header-provided label. If not available, show literal 'YESTERDAY'.
+    return (yesterdayHeaderLabel && yesterdayHeaderLabel.trim() !== '')
+      ? yesterdayHeaderLabel
+      : 'YESTERDAY';
   };
 
   const getSecondLevelLabel = (filter: SecondLevelFilter) => {
@@ -36,9 +36,8 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
 
   const handleTopLevelChange = (topLevel: TopLevelFilter) => {
     const availableSecondLevel = getSecondLevelFilters(topLevel);
-    const newSecondLevel = availableSecondLevel.includes(currentFilter.secondLevel) 
-      ? currentFilter.secondLevel 
-      : availableSecondLevel[0];
+    // Always default to the farthest-left (first) second-level option
+    const newSecondLevel = availableSecondLevel[0];
     
     onFilterChange({
       topLevel,
@@ -53,8 +52,35 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
     });
   };
 
+  // Fetch the header 'Yesterday' label when using SUBMITTED
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchHeaderLabel() {
+      try {
+        if (currentFilter.topLevel !== 'SUBMITTED') {
+          if (isMounted) setYesterdayHeaderLabel(null);
+          return;
+        }
+        const res = await fetch(`/api/header?topLevel=SUBMITTED`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isMounted) {
+          // data.label is the trimmed date like "Sep 18"
+          setYesterdayHeaderLabel(typeof data.label === 'string' ? data.label : null);
+        }
+      } catch (e) {
+        // Silently ignore and fallback to computed date
+        if (isMounted) setYesterdayHeaderLabel(null);
+      }
+    }
+    fetchHeaderLabel();
+    return () => {
+      isMounted = false;
+    };
+  }, [currentFilter.topLevel]);
+
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center mb-8 gap-4">
+    <div className="flex flex-col md:flex-row items-center justify-center gap-4">
       {/* Top Level Filters */}
       <div className="bg-[#1c1c1c] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
         {topLevelFilters.map((filter) => (
