@@ -77,7 +77,7 @@ export default function Leaderboard() {
   const remaining = filteredData.slice(3);
 
   return (
-    <div className="min-h-screen bg-white p-[10px]">
+    <div className="min-h-screen bg-black text-white p-[10px]">
       {/* Hero Section - Always visible */}
       <Hero />
       
@@ -85,8 +85,8 @@ export default function Leaderboard() {
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading leaderboard...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-300 mx-auto mb-4"></div>
+              <p className="text-gray-400">Loading leaderboard...</p>
             </div>
           </div>
         ) : error ? (
@@ -103,18 +103,19 @@ export default function Leaderboard() {
           </div>
         ) : (
           <>
-            {/* Filter Buttons */}
-            <FilterButtons
-              currentFilter={currentFilter}
-              onFilterChange={handleFilterChange}
-            />
+            <div className='flex flex-fow items-center justify-center w-[100%] gap-[15px]'>
+              {/* Filter Buttons */}
+              <FilterButtons
+                currentFilter={currentFilter}
+                onFilterChange={handleFilterChange}
+              />
 
-            {/* Search Bar */}
-            <SearchBar
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-            />
-
+              {/* Search Bar */}
+              <SearchBar
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+              />
+            </div>
             {/* Top Three Cards */}
             {topThree.length > 0 && (
               <TopThreeCards

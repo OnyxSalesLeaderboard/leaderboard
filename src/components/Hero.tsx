@@ -45,7 +45,16 @@ export default function Hero() {
     }
   }, []);
   return (
-    <div className="bg-black box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[30px] relative rounded-[30px] size-full min-h-[400px] mb-8 overflow-hidden">
+    <div
+      className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[30px] relative rounded-[30px] size-full min-h-[400px] mb-8 overflow-hidden"
+      style={{
+        backgroundImage: "url('/noise.png')",
+        background: `url('/noise.png'), radial-gradient(122.97% 109.34% at 13.09% 100%, #494949 0%, #282828 100%)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover', 
+        backgroundPosition: '0% 0%'
+      }}
+    >
       {/* Navigation */}
       <div className="relative w-full h-[50px]">
         {/* Mobile Navigation */}

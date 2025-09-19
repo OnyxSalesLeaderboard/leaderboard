@@ -56,7 +56,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
   return (
     <div className="flex flex-col md:flex-row items-center justify-center mb-8 gap-4">
       {/* Top Level Filters */}
-      <div className="bg-[#f1f1f1] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
+      <div className="bg-[#1c1c1c] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
         {topLevelFilters.map((filter) => (
           <button
             key={filter}
@@ -64,7 +64,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
             className={`content-stretch flex gap-[10px] items-center justify-center px-[30px] py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
               currentFilter.topLevel === filter
                 ? 'bg-[#4361ee] text-white'
-                : 'text-black hover:bg-black/5'
+                : 'text-white hover:bg-white/10'
             }`}
           >
             <div className="font-sans leading-[0] text-[14px] text-nowrap font-normal">
@@ -75,7 +75,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
       </div>
 
       {/* Second Level Filters */}
-      <div className="bg-[#f1f1f1] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
+      <div className="bg-[#1c1c1c] content-stretch flex gap-[4px] items-start justify-start rounded-[120px]">
         {getSecondLevelFilters(currentFilter.topLevel).map((filter) => (
           <button
             key={filter}
@@ -83,7 +83,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
             className={`content-stretch flex gap-[10px] items-center justify-center px-[30px] py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
               currentFilter.secondLevel === filter
                 ? 'bg-[#4361ee] text-white'
-                : 'text-black hover:bg-black/5'
+                : 'text-white hover:bg-white/10'
             }`}
           >
             <div className="font-sans leading-[0] text-[14px] text-nowrap font-normal">
@@ -92,6 +92,7 @@ export default function FilterButtons({ currentFilter, onFilterChange }: FilterB
           </button>
         ))}
       </div>
+
     </div>
   );
 }
