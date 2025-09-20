@@ -90,13 +90,13 @@ export default function FilterButtons({ currentFilter, onFilterChange, sheetName
           <button
             key={filter}
             onClick={() => handleTopLevelChange(filter)}
-            className={`content-stretch flex gap-[10px] items-center justify-center px-[30px] py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
+            className={`content-stretch flex gap-[10px] items-center justify-center px-[24px] py-[20px] md:px-[30px] md:py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
               currentFilter.topLevel === filter
                 ? 'bg-[#4361ee] text-white'
                 : 'text-white hover:bg-white/10'
             }`}
           >
-            <div className="font-sans leading-[0] text-[14px] text-nowrap font-normal">
+            <div className="font-sans leading-[0] text-[14px] md:text-[14px] text-nowrap font-normal">
               {filter}
             </div>
           </button>
@@ -109,13 +109,13 @@ export default function FilterButtons({ currentFilter, onFilterChange, sheetName
           <button
             key={filter}
             onClick={() => handleSecondLevelChange(filter)}
-            className={`content-stretch flex gap-[10px] items-center justify-center px-[30px] py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
+            className={`content-stretch flex gap-[10px] items-center justify-center px-[24px] py-[20px] md:px-[30px] md:py-[25px] rounded-[120px] shrink-0 transition-all duration-200 ${
               currentFilter.secondLevel === filter
                 ? 'bg-[#4361ee] text-white'
                 : 'text-white hover:bg-white/10'
             }`}
           >
-            <div className="font-sans leading-[0] text-[14px] text-nowrap font-normal">
+            <div className="font-sans leading-[0] text-[14px] md:text-[14px] text-nowrap font-normal">
               {getSecondLevelLabel(filter)}
             </div>
           </button>

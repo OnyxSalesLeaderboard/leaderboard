@@ -63,7 +63,7 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
   }, [isLeaderboardOpen]);
   return (
     <div
-      className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[2%] relative rounded-[30px] size-full min-h-[200px] mb-8 overflow-hidden"
+      className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[2%] relative rounded-[30px] size-full min-h-[200px] mb-8"
       style={{
         backgroundImage: "url('/noise.png')",
         background: `url('/noise.png'), radial-gradient(122.97% 109.34% at 13.09% 100%, #494949 0%, #282828 100%)`,
@@ -148,7 +148,7 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
         </div>
 
         {/* Mobile Menu Dropdown */}
-        <div className={`md:hidden absolute top-full left-0 w-full mt-2 backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] rounded-[20px] transition-all duration-300 overflow-hidden z-50 ${isMobileMenuOpen ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`md:hidden absolute top-full left-0 w-full mt-2 backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] rounded-[20px] transition-all duration-300 overflow-hidden z-50 ${isMobileMenuOpen ? 'opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="flex flex-col p-4 gap-2">
             <a 
               href="https://fiberonyx.com" 
@@ -212,7 +212,7 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
       </div>
       
       {/* Main Title - Ticker Animation */}
-      <div className="font-sans font-semibold leading-[0.9] not-italic relative shrink-0 text-[30vw] md:text-[16vw] text-center text-white overflow-hidden">
+      <div className="w-[100%] font-sans font-semibold leading-[0.9] not-italic relative shrink-0 text-[30vw] md:text-[16vw] text-center text-white overflow-hidden">
         <div ref={tickerRef} className="whitespace-nowrap">
           <span className="inline-block px-8">{title}</span>
           <span className="inline-block px-8">{title}</span>
