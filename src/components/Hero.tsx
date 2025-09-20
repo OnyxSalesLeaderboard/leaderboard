@@ -63,7 +63,7 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
   }, [isLeaderboardOpen]);
   return (
     <div
-      className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[40px] px-[2%] relative rounded-[30px] size-full min-h-[200px] mb-8"
+      className="box-border content-stretch flex flex-col items-center justify-between pb-[60px] pt-[10px] md:pt-[40px] px-[2%] relative rounded-[30px] size-full min-h-[200px] mb-8"
       style={{
         backgroundImage: "url('/noise.png')",
         background: `url('/noise.png'), radial-gradient(122.97% 109.34% at 13.09% 100%, #494949 0%, #282828 100%)`,
