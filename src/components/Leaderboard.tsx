@@ -130,6 +130,7 @@ export default function Leaderboard({ sheetName = 'Reps' }: LeaderboardProps) {
               <TopThreeCards
                 topThree={topThree}
                 currentFilter={currentFilter}
+                sheetName={sheetName}
               />
             )}
 
@@ -138,6 +139,7 @@ export default function Leaderboard({ sheetName = 'Reps' }: LeaderboardProps) {
               <LeaderboardList
                 entries={remaining}
                 currentFilter={currentFilter}
+                sheetName={sheetName}
               />
             )}
           </>

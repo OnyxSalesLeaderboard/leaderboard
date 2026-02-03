@@ -1,5 +1,13 @@
 import { LeaderboardEntry, FilterState } from './googleSheets';
 
+/** Returns the metric label (TSI, TSS, Installs, or Sales) based on filter and route. */
+export function getMetricLabel(topLevel: FilterState['topLevel'], sheetName: string): string {
+  if (topLevel === 'INSTALLED') {
+    return sheetName === 'Reps' ? 'TSI' : 'Installs';
+  }
+  return sheetName === 'Reps' ? 'TSS' : 'Sales';
+}
+
 export function getSalesValue(entry: LeaderboardEntry, filterState: FilterState): number {
   const { topLevel, secondLevel } = filterState;
   

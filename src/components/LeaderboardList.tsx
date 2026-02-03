@@ -1,13 +1,15 @@
 import { LeaderboardEntry, FilterState } from '@/lib/googleSheets';
-import { getSalesValue } from '@/lib/filterUtils';
+import { getSalesValue, getMetricLabel } from '@/lib/filterUtils';
 import { getTeamColor } from '@/lib/teamColors';
 
 interface LeaderboardListProps {
   entries: LeaderboardEntry[];
   currentFilter: FilterState;
+  /** When 'Reps' (home), show TSS instead of Sales. For Products/Teams, show Sales. */
+  sheetName?: string;
 }
 
-export default function LeaderboardList({ entries, currentFilter }: LeaderboardListProps) {
+export default function LeaderboardList({ entries, currentFilter, sheetName = 'Reps' }: LeaderboardListProps) {
 
   return (
     <div className="space-y-3">
@@ -45,7 +47,7 @@ export default function LeaderboardList({ entries, currentFilter }: LeaderboardL
                 <p className="leading-[normal] text-nowrap whitespace-pre">{getSalesValue(entry, currentFilter)}</p>
               </div>
               <div className="font-sans font-normal relative shrink-0 text-gray-400 uppercase">
-                <p className="leading-[normal] text-nowrap whitespace-pre">{currentFilter.topLevel === 'INSTALLED' ? 'Installs' : 'Sales'}</p>
+                <p className="leading-[normal] text-nowrap whitespace-pre">{getMetricLabel(currentFilter.topLevel, sheetName)}</p>
               </div>
             </div>
           </div>

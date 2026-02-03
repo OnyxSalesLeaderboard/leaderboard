@@ -6,9 +6,10 @@ import TopCard from '@/components/TopCard';
 interface TopThreeCardsProps {
   topThree: LeaderboardEntry[];
   currentFilter: FilterState;
+  sheetName?: string;
 }
 
-export default function TopThreeCards({ topThree, currentFilter }: TopThreeCardsProps) {
+export default function TopThreeCards({ topThree, currentFilter, sheetName = 'Reps' }: TopThreeCardsProps) {
 
 
   return (
@@ -16,13 +17,13 @@ export default function TopThreeCards({ topThree, currentFilter }: TopThreeCards
       {topThree.map((entry) => (
         <div key={entry.rank} className="size-full">
           {entry.rank === 1 ? (
-            <TopCard entry={entry} currentFilter={currentFilter} />
+            <TopCard entry={entry} currentFilter={currentFilter} sheetName={sheetName} />
           ) : entry.rank === 2 ? (
-            <TopCard entry={entry} currentFilter={currentFilter} variant="secondary" />
+            <TopCard entry={entry} currentFilter={currentFilter} variant="secondary" sheetName={sheetName} />
           ) : entry.rank === 3 ? (
-            <TopCard entry={entry} currentFilter={currentFilter} variant="tertiary" />
+            <TopCard entry={entry} currentFilter={currentFilter} variant="tertiary" sheetName={sheetName} />
           ) : (
-            <TopCard entry={entry} currentFilter={currentFilter} variant="standard" />
+            <TopCard entry={entry} currentFilter={currentFilter} variant="standard" sheetName={sheetName} />
           )}
         </div>
       ))}

@@ -1,5 +1,5 @@
 import { LeaderboardEntry, FilterState } from '@/lib/googleSheets';
-import { getSalesValue } from '@/lib/filterUtils';
+import { getSalesValue, getMetricLabel } from '@/lib/filterUtils';
 import { getTeamColor } from '@/lib/teamColors';
 
 // First variation card used for rank #1 in the TopThreeCards section.
@@ -11,9 +11,11 @@ interface TopCardProps {
   currentFilter: FilterState;
   // Variants: 'primary' for 1st, 'secondary' for 2nd, 'tertiary' for 3rd, 'standard' for others
   variant?: 'primary' | 'secondary' | 'tertiary' | 'standard';
+  /** When 'Reps' (home), show TSS instead of Sales. For Products/Teams, show Sales. */
+  sheetName?: string;
 }
 
-export default function TopCard({ entry, currentFilter, variant = 'primary' }: TopCardProps) {
+export default function TopCard({ entry, currentFilter, variant = 'primary', sheetName = 'Reps' }: TopCardProps) {
   // Style tokens per variant (from Figma)
   const tokens = {
     primary: {
@@ -93,7 +95,7 @@ export default function TopCard({ entry, currentFilter, variant = 'primary' }: T
             {getSalesValue(entry, currentFilter)}
           </div>
           <div className="font-sans uppercase text-gray-400 text-[17px] leading-none">
-            {currentFilter.topLevel === 'INSTALLED' ? 'Installs' : 'Sales'}
+            {getMetricLabel(currentFilter.topLevel, sheetName)}
           </div>
         </div>
       </div>
