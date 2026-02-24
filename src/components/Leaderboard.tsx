@@ -82,7 +82,14 @@ export default function Leaderboard({ sheetName = 'Reps' }: LeaderboardProps) {
   // Limit total shown entries to 50 (including top three)
   const remaining = filteredData.slice(3, 50);
 
-  const heroTitle = sheetName === 'Teams' ? 'Teams Leaderboard' : sheetName === 'Products' ? 'Products Leaderboard' : 'Reps Leaderboard';
+  const heroTitle =
+    sheetName === 'Teams'
+      ? 'Teams Leaderboard'
+      : sheetName === 'Products'
+      ? 'Products Leaderboard'
+      : sheetName === 'Divisions'
+      ? 'Divisions Leaderboard'
+      : 'Reps Leaderboard';
 
   return (
     <div className="min-h-screen bg-black text-white p-[10px]">

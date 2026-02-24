@@ -168,8 +168,8 @@ class GoogleSheetsService {
     // Column indices based on current mapping in this file:
     // Submitted columns (D, E, F, G) => indices 3,4,5,6. Yesterday is G => index 6
     if (topLevel === 'SUBMITTED') {
-      // If Teams or Products sheet, Yesterday is column E (index 4); otherwise G (index 6)
-      const idx = (sheetName === 'Teams' || sheetName === 'Products') ? 4 : 6;
+      // If Teams, Products, or Divisions sheet, Yesterday is column E (index 4); otherwise G (index 6)
+      const idx = (sheetName === 'Teams' || sheetName === 'Products' || sheetName === 'Divisions') ? 4 : 6;
       return header[idx] ?? null;
     }
     // No Yesterday concept for VERIFIED/INSTALLED per current UI
@@ -216,12 +216,12 @@ class GoogleSheetsService {
       //  Submitted YTD/MTD/WTD/Yesterday: D(3)/E(4)/F(5)/G(6)
       //  Verified YTD/MTD/WTD: H(7)/I(8)/J(9)
       //  Installed YTD/MTD: K(10)/L(11)
-      // Teams/Products sheet mapping (from provided screenshot):
+      // Teams/Products/Divisions sheet mapping (from provided screenshot):
       //  name (team): Col A (0)
       //  Submitted YTD/MTD/WTD/Yesterday: B(1)/C(2)/D(3)/E(4)
       //  Verified YTD/MTD/WTD: F(5)/G(6)/H(7)
       //  Installed YTD/MTD: I(8)/J(9)
-      const isAltSheet = (sheetName === 'Teams' || sheetName === 'Products');
+      const isAltSheet = (sheetName === 'Teams' || sheetName === 'Products' || sheetName === 'Divisions');
 
       dataRows.forEach((row: string[], index: number) => {
         console.log(`Processing row ${index + 1}:`, row);

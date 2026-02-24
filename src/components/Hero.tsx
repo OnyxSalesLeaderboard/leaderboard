@@ -135,6 +135,9 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
                     <Link href="/products" className="px-4 py-3 hover:bg-[rgba(233,233,233,0.25)] transition-colors" onClick={() => setIsLeaderboardOpen(false)}>
                       <span className="font-sans text-white">Products</span>
                     </Link>
+                    <Link href="/divisions" className="px-4 py-3 hover:bg-[rgba(233,233,233,0.25)] transition-colors" onClick={() => setIsLeaderboardOpen(false)}>
+                      <span className="font-sans text-white">Divisions</span>
+                    </Link>
                   </div>
                 </div>
               )}
@@ -204,6 +207,15 @@ export default function Hero({ title = 'Leaderboard' }: HeroProps) {
               >
                 <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
                   <p className="leading-[normal]">Products</p>
+                </div>
+              </Link>
+              <Link 
+                href="/divisions" 
+                className="backdrop-blur-[25px] backdrop-filter bg-[rgba(233,233,233,0.18)] box-border flex items-center justify-center px-[23px] py-[15px] rounded-[120px] hover:bg-[rgba(233,233,233,0.25)] transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <div className="font-sans font-semibold leading-[0] not-italic text-[16px] text-white">
+                  <p className="leading-[normal]">Divisions</p>
                 </div>
               </Link>
             </div>
